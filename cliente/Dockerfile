@@ -1,4 +1,4 @@
-# Usamos Ubuntu como sistema base, igual que tu máquina virtual
+# Usamos Ubuntu como sistema base
 FROM ubuntu:22.04
 
 # Evitamos que la terminal nos haga preguntas durante la instalación
