@@ -1,35 +1,21 @@
-FROM node:4-onbuild
+# Usamos una imagen oficial de Node.js ligera
+FROM node:18-bullseye-slim
 
-################
-#  App Deps    #
-################
+# Definimos el directorio de trabajo dentro del contenedor
+WORKDIR /usr/src/app
 
-RUN mkdir /app
-WORKDIR /app
+# Instalamos CoffeeScript globalmente, tal como lo exige tu servidor
+RUN npm install -g coffeescript
 
-# TODO:
-# Copy over your application stuff required to load up
-# dependencies and then install those dependencies
+# Copiamos todos los archivos de tu servidor al contenedor
+COPY . .
 
-ADD package.json /app/package.json
-RUN npm install -d
-RUN npm install -g coffee-script
+# Instalamos las dependencias internas del proyecto
+RUN npm install
 
+# Exponemos el puerto de RTMP (1935) y el de HTTP/RTSP (80)
+EXPOSE 1935
+EXPOSE 80
 
-################
-#  App Source  #
-################
-
-# Copy over your apps sourcecode in this section
-COPY . /app/
-
-
-#############
-#  Conclude #
-#############
-
-COPY entrypoint.sh /sbin/entrypoint.sh
-RUN chmod +x /sbin/entrypoint.sh
-RUN echo ". /sbin/entrypoint.sh" > /root/.bash_history
-
-ENTRYPOINT ["/sbin/entrypoint.sh"]
+# El comando maestro que encenderá el servidor automáticamente
+CMD ["coffee", "server.coffee"]
